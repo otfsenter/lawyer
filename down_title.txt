@@ -1,0 +1,30 @@
+联系方式-联系电话, contact_phone_number
+联系方式-微信, contact_wechat
+联系方式-邮箱, contact_email
+联系方式-联系地址, contact_address
+
+
+更多信息-政治派别, more_policy_identity
+更多信息-政治职务, more_job
+更多信息-交通工具, more_traffic
+更多信息-兴趣爱好, more_hobby
+
+执业信息-执业律所, career_office_name
+执业信息-律所规模, career_size
+执业信息-职务, career_position
+执业信息-执业证号, career_number
+执业信息-团队描述, career_desc
+
+教育背景-最高学历, edu_education
+教育背景-毕业院校, edu_school
+教育背景-所学专业, edu_speciality
+
+个人资料-性别, person_gender
+个人资料-年龄, person_age
+个人资料-民族, person_nation
+个人资料-属相, person_zodiac
+个人资料-星座, person_constellation
+个人资料-故乡, person_hometown
+个人资料-家庭, person_family
+个人资料-语言, person_language
+

@@ -1,5 +1,8 @@
 
-a = ['', '', '', '', '', '', '', '', '', '']
+a = [1,2]
+b = [3,4]
 
-print(any(a))
-print(all(a))
+c = []
+c.extend(a)
+c.extend(b)
+print(c)
