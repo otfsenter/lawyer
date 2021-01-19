@@ -57,22 +57,22 @@ def to_excel(data_list):
 
 
 def main():
-    # for k, v in id_lawyer_dict.items():
-    #     time.sleep(2)
-    #     url = url_info % str(k)
-    #     logger.info(url)
-    #     row_list = info_auth(url)
-    #
-    #     if any(row_list):
-    #         result_list.append(row_list)
+    for k, v in id_lawyer_dict.items():
+        time.sleep(2)
+        url = url_info % str(k)
+        logger.info(url)
+        row_list = info_auth(url)
 
-    result_list = []
-    result_list.append(result_title_cn_list)
-    with open('result.txt') as f:
-        for i in f:
-            i_new_list = eval(i)
-            if any(i_new_list):
-                result_list.append(i_new_list)
+        if any(row_list):
+            result_list.append(row_list)
+
+    # result_list = []
+    # result_list.append(result_title_cn_list)
+    # with open('result.txt') as f:
+    #     for i in f:
+    #         i_new_list = eval(i)
+    #         if any(i_new_list):
+    #             result_list.append(i_new_list)
 
     to_excel(result_list)
 
