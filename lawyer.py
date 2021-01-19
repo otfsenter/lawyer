@@ -287,7 +287,14 @@ def get_middle_info(soup):
 
     try:
         div_info = div_middle.find('div', {'class': 'unfold-bar'})
+
+        # div_info
+        # <div class="unfold-bar">
+        # 文字，我们要的数据
+        # </div>
+
         result_info = div_info.get_text().replace('展开全部', '').strip()
+        # result_info：文字，我们要的数据
     except:
         result_info = ''
 
@@ -346,8 +353,8 @@ def info_auth(url):
 #
 #     # http://www.64365.com/lawyer/8394206/info/
 #
-#     # logger.info(url)
-#     # info_auth(url)
+#     logger.info(url)
+#     info_auth(url)
 #
 #
 # if __name__ == '__main__':

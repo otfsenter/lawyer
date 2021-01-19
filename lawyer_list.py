@@ -6,13 +6,16 @@ import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 
+import conf
 from log import logger
 
 from speciality import get_category
 
 from speciality import strip_string
 
-url_category_root = 'http://www.64365.com'
+# url_category_root = 'http://www.64365.com'
+
+# url_category_root 'http://www.64365.com/anhui/lawyer/page_%s.aspx'
 
 DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
 
@@ -28,7 +31,7 @@ def get_lawyer_list(url_category_each, driver):
     :return:
     """
 
-
+    logger.info(url_category_each)
     driver.get(url_category_each)
     time.sleep(1)
 
@@ -68,6 +71,16 @@ def get_lawyer_list(url_category_each, driver):
 
 
 def get_page_list(url_category_each):
+    """
+    1、如果中间有省略号，会忽略掉
+    2、所以直接取最后一个数字，然后遍历范围内的所有页数
+    3、页码包含'>'的直接去掉不要
+    4、第一页的url就是变量url_category_each的值
+    5、后面的页的url：url_category_each + 'page_%s.aspx' % str(num_page)
+
+    :param url_category_each: 每个省份第一页的url
+    :return: 每个省份所有页数的url
+    """
     response = requests.get(
         url=url_category_each,
         headers=headers).text
@@ -76,29 +89,38 @@ def get_page_list(url_category_each):
 
     page_list = soup.find('div', {'class': 'u-page'})
 
+    if not page_list:
+        return []
+
     as_ = page_list.find_all('a')
 
     url_page_list = []
+
+    number_list = []
     for a in as_:
         if a:
             href_suffix = strip_string(a.get('href'))
-            text_page_origin = strip_string(a.get_text())
+            # text_page_origin = strip_string(a.get_text())
+            text_page_number = strip_string(a.get_text())
 
-            href = url_category_root + href_suffix
-            text_page = text_page_origin
+            if text_page_number != '>':
+                number_list.append(text_page_number)
 
-            if text_page_origin == '1':
-                href = url_category_each
-                text_page = text_page_origin
+    try:
+        last_page_number = int(number_list[-1])
+    except (ValueError, IndexError, TypeError):
+        last_page_number = 1
 
-            if text_page_origin == '>':
-                href = ''
-                text_page = ''
-        else:
-            href = ''
-            text_page = ''
+    for num_page in range(1, last_page_number + 1):
+        logger.info(num_page)
 
-        if href and text_page:
+        href = url_category_each + 'page_%s.aspx' % str(num_page)
+
+        if num_page == 1:
+            href = url_category_each
+
+        if href:
+            logger.info(href)
             url_page_list.append(href)
 
     return url_page_list
@@ -123,20 +145,29 @@ def url_suffix2id(url_suffix):
 def run():
     driver = webdriver.Chrome()
 
-    list_item_url_dict = get_category()
+    # list_item_url_dict = get_category()
+
+    url_shenhui_root = 'http://www.64365.com/%s/lawyer/'
 
     all_lawyer_dict = {}
-    for list_, item_url in list_item_url_dict.items():
-        for item, url_category in item_url.items():
-            url_category_each = url_category_root + url_category
+    # for list_, item_url in list_item_url_dict.items():
+    #     for item, url_category in item_url.items():
+    #         url_category_each = url_category_root + url_category
 
-            time.sleep(2)
+    for shenhui in conf.shenhui:
+        url_category_each = url_shenhui_root % shenhui
 
-            # 获取每个专长下面的所有页面
-            url_page_list = get_page_list(url_category_each)
+        logger.info(str(shenhui))
 
+        time.sleep(2)
+
+        # 获取每个专长下面的所有页面
+        url_page_list = get_page_list(url_category_each)
+
+        if url_page_list:
             # 从每个页面找所有律师
             for each_url_page in url_page_list:
+                logger.info(each_url_page)
 
                 time.sleep(1)
 
@@ -151,21 +182,24 @@ def run():
                         if url and lawyer:
                             id_ = url_suffix2id(url)
                             all_lawyer_dict.setdefault(id_, lawyer)
-                            logger.info(str(id_))
-                            logger.info(str(lawyer))
+                            logger.info('-'.join([
+                                'lawyer0108',
+                                str(id_),
+                                str(lawyer)
+                            ]))
 
             # {'//www.64365.com/lawyer/1239347/': '黄浩律师',
             #  '//www.64365.com/lawyer/1286074/': '兰易易律师',
             #  '//www.64365.com/lawyer/1405544/': '罗红律师' }
 
             # {'1239347': '黄浩律师',
-             #  '1405544': '罗红律师',
-             #  '1410121': '肖娟律师',
+            #  '1405544': '罗红律师',
+            #  '1410121': '肖娟律师',
 
     driver.quit()
 
     pprint(all_lawyer_dict)
-            # return
+    # return
 
 
 def main():

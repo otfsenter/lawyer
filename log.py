@@ -9,7 +9,7 @@ logger = logging.getLogger()
 def set_logger():
     logger.setLevel(logging.INFO)
     formatter = logging.Formatter(
-        '%(asctime)s: '
+        # '%(asctime)s: '
         '%(levelname)s:'
         '%(name)s:'
         '%(message)s'
@@ -18,7 +18,7 @@ def set_logger():
     file_handler = RotatingFileHandler(
         filename=LOG_FILENAME,
         maxBytes=5 * 1024 * 1024,
-        backupCount=3,
+        backupCount=20,
         encoding='utf-8'
     )
     file_handler.setFormatter(formatter)

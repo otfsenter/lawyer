@@ -3,3 +3,8 @@ __pycache__/
 output.log
 *.pyc
 *.pyo
+test/
+output.log.*
+conf2.py
+t.py
+result.txt

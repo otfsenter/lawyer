@@ -43,20 +43,36 @@ def to_excel(data_list):
         for col_index, cell_value in enumerate(row_list):
             col_index = col_index + 1
 
-            ws.cell(row=row_index, column=col_index, value=cell_value)
+            # logger.info(str(cell_value))
+
+            value_result = str(cell_value)[:15000]
+
+
+            try:
+                ws.cell(row=row_index, column=col_index, value=value_result)
+            except openpyxl.utils.exceptions.IllegalCharacterError:
+                ws.cell(row=row_index, column=col_index, value='')
 
     wb.save(file_excel)
 
 
 def main():
-    for k, v in id_lawyer_dict.items():
-        time.sleep(2)
-        url = url_info % str(k)
-        logger.info(url)
-        row_list = info_auth(url)
+    # for k, v in id_lawyer_dict.items():
+    #     time.sleep(2)
+    #     url = url_info % str(k)
+    #     logger.info(url)
+    #     row_list = info_auth(url)
+    #
+    #     if any(row_list):
+    #         result_list.append(row_list)
 
-        if any(row_list):
-            result_list.append(row_list)
+    result_list = []
+    result_list.append(result_title_cn_list)
+    with open('result.txt') as f:
+        for i in f:
+            i_new_list = eval(i)
+            if any(i_new_list):
+                result_list.append(i_new_list)
 
     to_excel(result_list)
 
